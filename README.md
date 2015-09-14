@@ -1,6 +1,6 @@
-# ceilometer
+# ceilometer setup
 
-#install common components
+#Install common components
 
 sudo apt-get install git -y
 
@@ -34,7 +34,7 @@ cd ~/devstack
 
 #Enable ceilometer services
 
-- Follow instructions as suggested in http://docs.openstack.org/developer/ceilometer/install/development.html
+-Follow instructions as suggested in http://docs.openstack.org/developer/ceilometer/install/development.html
 
 #Install Devstack
 
@@ -42,7 +42,7 @@ cd ~/devstack
 
 #Restart Ceilometer Auditing
 
-- restart nova and cinder after changes mentioned in http://docs.openstack.org/developer/ceilometer/install/development.html
+-restart nova and cinder after changes mentioned in http://docs.openstack.org/developer/ceilometer/install/development.html
 
 
 
