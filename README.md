@@ -1,4 +1,4 @@
-# ceilometer setup
+#Ceilometer setup
 
 #Install common components
 
