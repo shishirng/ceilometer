@@ -1,0 +1,70 @@
+
+nova volume-attach inst2 9a14ac9a-e787-4c13-965d-54f29f73e8c2 auto
+glance image-list
+ssh-keygen
+nova keypair-add --pub-key /home/raghav/.ssh/id_rsa.pub mykey 
+nova boot --flavor 2 --key-name mykey --image 00c38d88-1e89-4add-9413-47cfd35855a9 cmd_inst1
+ssh cirros@10.0.0.3 //In a CirrOS image, the login account is cirros. The password is cubswin:)
+nova boot --flavor 2 --boot-volume 84f1a9a6-14bb-444e-a055-e11a7986c26e testvm
+cinder snapshot-create 5f2cee09-9070-43af-a4ec-cee8908c8723
+
+>>>>>>>>>>>>>>
+
+//change /opt/stack/tempest/etc/tempest.conf accordingly [put password for admin]
+//test cases are at /opt/stack/tempest/tempest/api/volume
+cd /opt/stack/tempest/
+./run_tempest.sh tempest.api.volume
+results are at:
+>>>>>>>>>>>>>>>>>>>>>
+
+
+Steps for HA Internal Monitoring
+
+- Setup a server inside OpenStack Cloud with db (mysql) backend and a query front end (1.5 day)
+- Create a cron job running selected tempest.volume tests (2 min run) every 30 min from this server (1 day, access and setup for auto run)
+- Collect status of every run and push it to db in format <timestamp, pass/fail> (0.5 day)
+- Implement query front end to display Availability % given the start and end time (preserve data for 3 months cycle) (1 day)
+
+Nice to have:
+
+- Integrate HA query service with Horizon and Keystone (x days)
+
+
+ceilometer
+
+http://docs.openstack.org/developer/ceilometer/architecture.html
+http://docs.openstack.org/developer/ceilometer/measurements.html#measurements
+
+
+-H "X-Auth-Token: {SHA1}a8673b09024371297fbc6a19c5d4aea0606bd3d3"
+
+curl -s -X POST http://100.113.64.154:5000/v2.0/tokens -H "Content-Type: application/json" -d '{"auth": {"tenantName": "'"$OS_TENANT_NAME"'", "passwordCredentials": {"username": "'"$OS_USERNAME"'", "password": "'"$OS_PASSWORD"'"}}}' | python -m json.tool
+
+
+curl -H 'X-Auth-Token: c84dbedad315436ca201ac25a2d97308' "http://100.113.64.154:8777/v2/meters" | python -m json.tool
+curl -H 'X-Auth-Token: c84dbedad315436ca201ac25a2d97308' "http://100.113.64.154:8777/v2/meters/availability.status.passed" | python -m json.tool
+curl -H 'X-Auth-Token: c84dbedad315436ca201ac25a2d97308' "http://100.113.64.154:8777/v2/events/" | python -m json.tool
+
+curl -H 'X-Auth-Token: c84dbedad315436ca201ac25a2d97308' "http://100.113.64.154:8777/v2/events?q.field=event_type&q.op=eq&q.type=string&q.value=volume.attach.end" | python -m json.tool
+curl -H 'X-Auth-Token: c84dbedad315436ca201ac25a2d97308' "http://100.113.64.154:8777/v2/events?q.field=event_type&q.op=eq&q.type=string&q.value=volume.attach.start" | python -m json.tool
+
+
+ceilometer sample-create --project-id f399263265a34b03af020868deca462e --user-id 02b65970c3414bd48c5dafda335c2af3 --resource-id 5bdce4d1-6499-48b7-8927-cd9c598dd873 --meter-name volume.size --meter-type gauge --meter-unit GB --sample-volume  --direct True
+
+
+valid keys: ['message_id', 'meter', 'project', 'resource', 'search_offset', 'source', 'timestamp', 'user']
+ceilometer sample-list -m availability.status.passed -q meter=string::availability.status.passed
+
+
+curl -H 'X-Auth-Token: c84dbedad315436ca201ac25a2d97308' "http://100.113.64.154:8777/v2/meters/availability.status.passed?q.field=timestamp&q.op=gt&q.type=date_time&q.value=2015-09-11T04:24:27.444105" | python -m json.tool
+
+curl -X GET -H "X-Auth-Token: 257f354dca974a7284cc979b89dbd144" -H "Content-Type: application/json" -d '{"q": [{"field": "timestamp", "op": "gt", "value": "2015-09-11T04:24:28.444105"}, {"field": "timestamp", "op": "lt", "value": "2015-09-11T04:27:56.604023"}]}' http://100.113.64.154:8777/v2/meters/availability.status.passed | python -m json.tool
+
+ceilometer sample-list --meter availability.status.passed --query 'timestamp>2015-09-11T04:24:28.444105;timestamp>=2015-09-11T04:27:56.604023'
+
+ceilometer sample-list --meter availability.status.passed --query 'timestamp>=2015-09-11T04:24:28;timestamp<=2015-09-11T04:28:56'
+
+date -u +'%Y-%M-%dT%H-%M-%S'
+
+ceilometer statistics --meter availability.status.event -a count --query 'timestamp>=2015-09-11T04:24:28;timestamp<=2015-09-11T19:27:56'
+
