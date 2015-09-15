@@ -1,0 +1,7 @@
+raghav@raghav1:~/Documents/devstack-install/ceilometer$ eval "$(ssh-agent -s)"
+Agent pid 24166
+raghav@raghav1:~/Documents/devstack-install/ceilometer$ ssh-add ~/.ssh/id_rsa
+Identity added: /home/raghav/.ssh/id_rsa (/home/raghav/.ssh/id_rsa)
+raghav@raghav1:~/Documents/devstack-install/ceilometer$ gedit ~/.ssh/id_rsa.pub raghav@raghav1:~/Documents/devstack-install/ceilometer$ ssh -T git@github.com
+Hi rmaloo! You've successfully authenticated, but GitHub does not provide shell access.
+

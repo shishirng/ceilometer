@@ -1,0 +1,18 @@
+
+This is your host IP address: 192.168.42.54
+This is your host IPv6 address: ::1
+Horizon is now available at http://192.168.42.54/dashboard
+Keystone is serving at http://192.168.42.54:5000/
+The default users are: admin and demo
+The password: password
+
+
+sudo ifconfig eth0:0 10.0.2.15
+sudo ifconfig eth0:1 192.168.42.54
+
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
+echo "deb http://download.mono-project.com/repo/debian wheezy main" | sudo tee /etc/apt/sources.list.d/mono-xamarin.list
+sudo apt-get update
+sudo apt-get install mono-complete
+mono --version # Mono JIT compiler version 4.0.1 (tarball Tue Apr 28 11:47:58 UTC 2015)
+
