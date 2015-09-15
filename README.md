@@ -6,7 +6,7 @@ sudo apt-get install git -y
 
 sudo apt-get install python-dev libssl-dev python-pip git-core libxml2-dev libxslt-dev pkg-config libffi-dev libpq-dev libmysqlclient-dev libvirt-dev graphviz libsqlite3-dev -y
 
-#CEPH installation
+#CEPH Installation
 
 git clone https://github.com/theanalyst/ceph-bootstrap
 
@@ -30,9 +30,9 @@ cd ~/devstack
 
 -set REMOTE_CEPH=True in the copied localrc
 
--replace ceph=$(uuidgen) by current ceph fsid (use command sudo ceph status)
+-replace CEPH_FSID to the current ceph fsid (use command sudo ceph status)
 
-#Enable ceilometer services
+#Enable Ceilometer Services
 
 -Follow instructions as suggested in http://docs.openstack.org/developer/ceilometer/install/development.html
 
@@ -43,6 +43,8 @@ cd ~/devstack
 #Restart Ceilometer Auditing
 
 -restart nova and cinder after changes mentioned in http://docs.openstack.org/developer/ceilometer/install/development.html
+
+-Note: all the above localrc changes are readily available in the checked in localrc to this git site
 
 
 
