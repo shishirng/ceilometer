@@ -43,7 +43,7 @@ fi
 
 ttc=`date -u --iso-8601=seconds -d "now - $months months - $weeks weeks - $days days - $hours hours - $minutes minutes - $seconds seconds"`
 
-echo "ttc=$ttc"
+#echo "ttc=$ttc"
 
 #ceilometer statistics --meter availability.status.event --query 'timestamp>=2015-09-11T04:24:28;timestamp<=2015-10-07T00:49:56+0000' > /tmp/stats
 ceilometer statistics --meter availability.status.event --query "timestamp>=$ttc" > /tmp/stats
@@ -60,6 +60,7 @@ do
 				c=`echo $word \* 100.0 | bc -l`
 				echo -e "             ----------------------------------"
 				echo -e "                Availability : $c%"
+				echo -e "             From : [`date +'%x %X' -d $ttc`]       "
 				echo -e "             ----------------------------------"
                         fi
                         let "b += 1"
