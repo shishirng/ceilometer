@@ -1,9 +1,23 @@
 #!/usr/bin/env bash
 # run_check_availability.sh
 
-ipaddress=100.113.160.55
+function usage {
+  echo "Usage: run_check_reachability <ipaddress>"
+  echo ""
+}
+
+if  [ $# -lt 1 ] ; then
+
+	usage
+	exit 1
+fi
+
+
+ipaddress=$1
 
 testfreq_sleep=1m
+
+echo -e "ipaddress=$ipaddress"
 
 while :
 

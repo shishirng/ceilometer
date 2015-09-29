@@ -5,12 +5,12 @@ function usage {
   echo "Usage: $0 [OPTION]..."
   echo "Query Reachability"
   echo ""
-  echo "  -S, --seconds        	Availability during these many seconds before to now"
-  echo "  -X, --minutes        	Availability during these many minutes before to now"
-  echo "  -H, --hours        	Availability during these many hours before to now"
-  echo "  -D, --days        	Availability during these many days before to now"
-  echo "  -W, --weeks        	Availability during these many weeks before to now"
-  echo "  -M, --months        	Availability during these many months before to now"
+  echo "  -S, --seconds        	Reachability during these many seconds before to now"
+  echo "  -X, --minutes        	Reachability during these many minutes before to now"
+  echo "  -H, --hours        	Reachability during these many hours before to now"
+  echo "  -D, --days        	Reachability during these many days before to now"
+  echo "  -W, --weeks        	Reachability during these many weeks before to now"
+  echo "  -M, --months        	Reachability during these many months before to now"
   echo ""
 }
 
