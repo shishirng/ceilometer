@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # run_check_availability.sh
 
+source ./query_sample_avg.sh
+
 failed=0
 passed=0
 
