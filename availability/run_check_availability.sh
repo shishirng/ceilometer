@@ -61,6 +61,14 @@ do
 	    else
 		recover_evt
 	    fi
+
+	   compute_avg availability.status.event 0 0 1 0 0 0  avg_returned_value ttc_returned_value
+			
+	   echo "To:raghvendra.maloo@ril.com;swami.reddy@ril.com" > /tmp/mail.txt
+	   echo "Subject:Availability Test Failure" >> /tmp/mail.txt
+	   echo "Availability Drop ALERT!! Availability for last one hour is $avg_returned_value%" >> /tmp/mail.txt
+
+	   curl --url "smtps://smtp.gmail.com:465" --ssl-reqd   --mail-from "rjil.notify@gmail.com" --mail-rcpt "raghvendra.maloo@ril.com"   --upload-file /tmp/mail.txt --user "rjil.notify@gmail.com:cloud@123" --insecure
 	
 	fi
 
