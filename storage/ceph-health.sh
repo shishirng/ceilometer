@@ -17,6 +17,7 @@ rm -f /tmp/ceph.log.today
 rm -f /tmp/ceph.log.tail
 rm -f /tmp/ceph.log.warnings
 rm -f /tmp/ceph.log.health
+rm -f /tmp/ceph.log.nearfull
 
 # check ceph health
 HEALTH=$(timeout $ceph_health_timeout sudo ceph health)
@@ -45,5 +46,13 @@ then
     echo "$WARNINGS" >> /tmp/ceph.log.warnings
     echo  >> /tmp/ceph.log.warnings
     notify_thru_email "Ceph Warnings Alert!" /tmp/ceph.log.warnings
+fi
+
+NEARFULL=`sudo ceph -s -f json | jq .osdmap.osdmap.nearfull`
+
+if [ "$NEARFULL" != "false" ] 
+then
+	sudo ceph -s -f json | jq .osdmap.osdmap > /tmp/ceph.log.nearfull
+	notify_thru_email "Ceph Nearfull Alert!" /tmp/ceph.log.nearfull
 fi
 
