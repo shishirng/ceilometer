@@ -12,12 +12,14 @@ function notify_thru_email()
 
 ceph_health_timeout=30
 script_sleep_min=30
+latency_threshold=100 #ms
 
 rm -f /tmp/ceph.log.today
 rm -f /tmp/ceph.log.tail
 rm -f /tmp/ceph.log.warnings
 rm -f /tmp/ceph.log.health
 rm -f /tmp/ceph.log.nearfull
+rm -f /tmp/ceph.log.latency
 
 # check ceph health
 HEALTH=$(timeout $ceph_health_timeout sudo ceph health)
@@ -55,4 +57,19 @@ then
 	sudo ceph -s -f json | jq .osdmap.osdmap > /tmp/ceph.log.nearfull
 	notify_thru_email "Ceph Nearfull Alert!" /tmp/ceph.log.nearfull
 fi
+
+NUMOSDS=`sudo ceph osd perf -f json | jq '.osd_perf_infos | length'`
+COUNTER=0
+while [  $COUNTER -lt $NUMOSDS ]; do
+             LATENCY=`sudo ceph osd perf -f json | jq .osd_perf_infos[$COUNTER].perf_stats.apply_latency_ms`
+
+	     if [ $LATENCY -ge $latency_threshold ] 
+	     then
+		sudo ceph osd perf -f json | jq .osd_perf_infos > /tmp/ceph.log.latency
+                notify_thru_email "Ceph OSD Latency Alert!" /tmp/ceph.log.latency
+                break
+	     fi
+
+             let COUNTER=COUNTER+1 
+done
 
