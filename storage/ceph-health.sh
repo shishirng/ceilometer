@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function sendemail()
+function notify_thru_email()
 {
 	echo "To:raghvendra.maloo@ril.com;swami.reddy@ril.com" > /tmp/mail.txt
 	echo "Subject:$1" >> /tmp/mail.txt
@@ -22,7 +22,7 @@ rm -f /tmp/ceph.log.health
 HEALTH=$(timeout $ceph_health_timeout sudo ceph health)
 if [ "$?" = 124 ] #timeout's exit code is 124 when the timeout is hit
 then
-    HEALTH="ceph health timed out (30s), potential loss of quorum!"
+    HEALTH="ceph health timed out ($ceph_health_timeout seconds), potential loss of quorum!"
 fi
 
 if [ "$HEALTH" != 'HEALTH_OK' ]
@@ -30,7 +30,7 @@ then
     echo -n "Ceph is not healthy: " >> /tmp/ceph.log.health
     echo "$HEALTH" >> /tmp/ceph.log.health
     echo >> /tmp/ceph.log.health
-    sendmail "Ceph Health Alert!" /tmp/ceph.log.health
+    notify_thru_email "Ceph Health Alert!" /tmp/ceph.log.health
 fi
 
 # get logs for specified minutes
@@ -44,6 +44,6 @@ then
     echo "$WARNINGS"|wc -l >> /tmp/ceph.log.warnings
     echo "$WARNINGS" >> /tmp/ceph.log.warnings
     echo  >> /tmp/ceph.log.warnings
-    sendemail "Ceph Warnings Alert!" /tmp/ceph.log.warnings
+    notify_thru_email "Ceph Warnings Alert!" /tmp/ceph.log.warnings
 fi
 
