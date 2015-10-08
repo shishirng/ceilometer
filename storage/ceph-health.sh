@@ -11,65 +11,81 @@ function notify_thru_email()
 }
 
 ceph_health_timeout=30
-script_sleep_min=30
+script_sleep_min=1
 latency_threshold=100 #ms
 
-rm -f /tmp/ceph.log.today
-rm -f /tmp/ceph.log.tail
-rm -f /tmp/ceph.log.warnings
-rm -f /tmp/ceph.log.health
-rm -f /tmp/ceph.log.nearfull
-rm -f /tmp/ceph.log.latency
+while :
 
-# check ceph health
-HEALTH=$(timeout $ceph_health_timeout sudo ceph health)
-if [ "$?" = 124 ] #timeout's exit code is 124 when the timeout is hit
-then
-    HEALTH="ceph health timed out ($ceph_health_timeout seconds), potential loss of quorum!"
-fi
+do
 
-if [ "$HEALTH" != 'HEALTH_OK' ]
-then
-    echo -n "Ceph is not healthy: " >> /tmp/ceph.log.health
-    echo "$HEALTH" >> /tmp/ceph.log.health
-    echo >> /tmp/ceph.log.health
-    notify_thru_email "Ceph Health Alert!" /tmp/ceph.log.health
-fi
+	rm -f /tmp/ceph.log.today
+	rm -f /tmp/ceph.log.tail
+	rm -f /tmp/ceph.log.warnings
+	rm -f /tmp/ceph.log.health
+	rm -f /tmp/ceph.log.nearfull
+	rm -f /tmp/ceph.log.latency
+	
+	TIMEDOUT=0
 
-# get logs for specified minutes
-awk -vDATE=`date +%Y-%m-%d` ' { if ($1 >= DATE) print $0}' /var/log/ceph/ceph.log > /tmp/ceph.log.today
-awk -vTIME=`date -d "now - $script_sleep_min minutes" +%H:%M:%S` ' { if ($2 > TIME) print $0}' /tmp/ceph.log.today > /tmp/ceph.log.tail
+	# check ceph health
+	HEALTH=$(timeout $ceph_health_timeout sudo ceph health)
+	if [ "$?" = 124 ]
+	then
+	    HEALTH="ceph health timed out ($ceph_health_timeout seconds), potential loss of quorum!"
+	    TIMEDOUT=1
+	fi
 
-WARNINGS=$(grep -v INF /tmp/ceph.log.tail)
-if [ "$WARNINGS" ]
-then
-    echo -n "Warnings in ceph.log: " >> /tmp/ceph.log.warnings
-    echo "$WARNINGS"|wc -l >> /tmp/ceph.log.warnings
-    echo "$WARNINGS" >> /tmp/ceph.log.warnings
-    echo  >> /tmp/ceph.log.warnings
-    notify_thru_email "Ceph Warnings Alert!" /tmp/ceph.log.warnings
-fi
+	if [ "$HEALTH" != 'HEALTH_OK' ]
+	then
+	    echo -n "Ceph is not healthy: " >> /tmp/ceph.log.health
+	    echo "$HEALTH" >> /tmp/ceph.log.health
+	    echo >> /tmp/ceph.log.health
+	    notify_thru_email "Ceph Health Alert!" /tmp/ceph.log.health
+	fi
 
-NEARFULL=`sudo ceph -s -f json | jq .osdmap.osdmap.nearfull`
+	# get logs for specified minutes
+	awk -vDATE=`date +%Y-%m-%d` ' { if ($1 >= DATE) print $0}' /var/log/ceph/ceph.log > /tmp/ceph.log.today
+	awk -vTIME=`date -d "now - $script_sleep_min minutes" +%H:%M:%S` ' { if ($2 > TIME) print $0}' /tmp/ceph.log.today > /tmp/ceph.log.tail
 
-if [ "$NEARFULL" != "false" ] 
-then
-	sudo ceph -s -f json | jq .osdmap.osdmap > /tmp/ceph.log.nearfull
-	notify_thru_email "Ceph Nearfull Alert!" /tmp/ceph.log.nearfull
-fi
+	WARNINGS=$(grep -v INF /tmp/ceph.log.tail)
+	if [ "$WARNINGS" ]
+	then
+	    echo -n "Warnings in ceph.log: " >> /tmp/ceph.log.warnings
+	    echo "$WARNINGS"|wc -l >> /tmp/ceph.log.warnings
+	    echo "$WARNINGS" >> /tmp/ceph.log.warnings
+	    echo  >> /tmp/ceph.log.warnings
+	    notify_thru_email "Ceph Warnings Alert!" /tmp/ceph.log.warnings
+	fi
 
-NUMOSDS=`sudo ceph osd perf -f json | jq '.osd_perf_infos | length'`
-COUNTER=0
-while [  $COUNTER -lt $NUMOSDS ]; do
-             LATENCY=`sudo ceph osd perf -f json | jq .osd_perf_infos[$COUNTER].perf_stats.apply_latency_ms`
+	if [ $TIMEDOUT -eq 0 ] 
+	then
+		NEARFULL=`timeout $ceph_health_timeout sudo ceph -s -f json | jq .osdmap.osdmap.nearfull`
 
-	     if [ $LATENCY -ge $latency_threshold ] 
-	     then
-		sudo ceph osd perf -f json | jq .osd_perf_infos > /tmp/ceph.log.latency
-                notify_thru_email "Ceph OSD Latency Alert!" /tmp/ceph.log.latency
-                break
-	     fi
+		if [ "$NEARFULL" != "false" ] 
+		then
+			timeout $ceph_health_timeout sudo ceph -s -f json | jq .osdmap.osdmap > /tmp/ceph.log.nearfull
+			notify_thru_email "Ceph Nearfull Alert!" /tmp/ceph.log.nearfull
+		fi
 
-             let COUNTER=COUNTER+1 
+		NUMOSDS=`timeout $ceph_health_timeout sudo ceph osd perf -f json | jq '.osd_perf_infos | length'`
+		COUNTER=0
+	
+		while [ $COUNTER -lt $NUMOSDS ]; do
+
+			     LATENCY=`timeout $ceph_health_timeout sudo ceph osd perf -f json | jq .osd_perf_infos[$COUNTER].perf_stats.apply_latency_ms`
+
+			     if [ $LATENCY -ge $latency_threshold ] 
+			     then
+				timeout $ceph_health_timeout sudo ceph osd perf -f json | jq .osd_perf_infos > /tmp/ceph.log.latency
+				notify_thru_email "Ceph OSD Latency Alert!" /tmp/ceph.log.latency
+				break
+			     fi
+
+			     let COUNTER=COUNTER+1 
+		done
+	fi
+	
+	script_sleep_duration=`echo "$script_sleep_min""m"`
+        sleep $script_sleep_duration
 done
 
