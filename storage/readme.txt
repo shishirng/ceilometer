@@ -1,2 +1,2 @@
 -Make sure jq is installed
--run the ceph-health.sh with sudo previledge
+-run the ceph-health-v2.sh with sudo previledge e.g. >> sudo ./ceph-health-v2.sh
