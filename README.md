@@ -6,6 +6,8 @@ sudo apt-get install git -y
 
 sudo apt-get install python-dev libssl-dev python-pip git-core libxml2-dev libxslt-dev pkg-config libffi-dev libpq-dev libmysqlclient-dev libvirt-dev graphviz libsqlite3-dev -y
 
+sudo apt-get install jq
+
 #CEPH Installation
 
 git clone https://github.com/theanalyst/ceph-bootstrap
