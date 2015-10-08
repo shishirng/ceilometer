@@ -52,12 +52,12 @@ do
 	    notify_thru_email "Ceph Health Alert!" /tmp/ceph.log.health
 	fi
 
-	WARNINGS=$(grep -v INF /tmp/ceph.log.copy)
+	WARNINGS=$(grep WRN /tmp/ceph.log.copy)
 	if [ "$WARNINGS" ]
 	then
 	    echo -n "Warnings in ceph.log: " >> /tmp/ceph.log.warnings
 	    echo "$WARNINGS"|wc -l >> /tmp/ceph.log.warnings
-	    echo "$WARNINGS" >> /tmp/ceph.log.warnings
+	    grep -v INF /tmp/ceph.log.copy >> /tmp/ceph.log.warnings
 	    echo  >> /tmp/ceph.log.warnings
 	    notify_thru_email "Ceph Warnings Alert!" /tmp/ceph.log.warnings
 	fi
