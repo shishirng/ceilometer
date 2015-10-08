@@ -1,0 +1,2 @@
+-Make sure jq is installed
+-run the ceph-health.sh with sudo previledge
