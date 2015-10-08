@@ -13,7 +13,7 @@ function notify_thru_email()
 }
 
 ceph_health_timeout=30
-script_sleep_min=1
+script_sleep_min=30
 latency_threshold=100 #ms
 
 while :

@@ -2,7 +2,8 @@
 
 function start_rcv_log()
 {
-	sudo ceph -w > /tmp/ceph.log.copy&
+	sudo rm -f $1
+	sudo ceph -w > $1&
 }
 
 function stop_rcv_log()
@@ -14,9 +15,5 @@ function stop_rcv_log()
 		sudo kill -9 $PROCID
 
 	done < /tmp/ceph.w.cmd
-	#sudo rm -f /tmp/ceph.log.copy
 }
 
-start_rcv_log
-sleep 60
-stop_rcv_log
