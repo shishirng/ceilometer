@@ -2,5 +2,5 @@
 - copy run_check_availability to /opt/stack/tempest
 - extract passvol.gz and failvol.gz in /opt/stack/tempest/tempest/api
 - check normal tempest testcases are running file
-- run script run_check_availability from /opt/stack/tempest
+- run script run_check_availability from /opt/stack/tempest (see if need to tune duration, email-ids and port parameters)
 - on another terminal you can check availability percentage for a require time window using query_availability_1.sh
