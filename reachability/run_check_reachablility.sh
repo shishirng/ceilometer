@@ -16,8 +16,8 @@ fi
 
 
 ipaddress=$1
-
 testfreq_sleep=1m
+r_threshold=99.9
 
 echo -e "ipaddress=$ipaddress"
 
@@ -55,6 +55,19 @@ tenant=`curl -s -X POST http://$ipaddress:5000/v2.0/tokens -H "Content-Type: app
 		    curl --url "smtps://smtp.gmail.com:465" --ssl-reqd   --mail-from "rjil.notify@gmail.com" --mail-rcpt "raghvendra.maloo@ril.com"   --upload-file /tmp/mail.txt --user "rjil.notify@gmail.com:cloud@123" --insecure
 
 		    rm -f /tmp/mail.txt
+
+		    if [ $(bc <<< "$avg_returned_value <= $r_threshold") -eq 1 ]; then
+
+           		#notify PMs
+			#echo "To:Ravikanth.Maddikonda@ril.com" > /tmp/mail.txt
+                        echo "To:raghvendra.maloo@ril.com;swami.reddy@ril.com" > /tmp/mail.txt
+			echo "Subject:Reachability Below Threshold!" >> /tmp/mail.txt
+			echo "Reachability Drop ALERT!! Reachability for last one hour is $avg_returned_value%" >> /tmp/mail.txt
+
+			#curl --url "smtps://smtp.gmail.com:465" --ssl-reqd   --mail-from "rjil.notify@gmail.com" --mail-rcpt "Ravikanth.Maddikonda@ril.com"   --upload-file /tmp/mail.txt --user "rjil.notify@gmail.com:cloud@123" --insecure
+                        curl --url "smtps://smtp.gmail.com:465" --ssl-reqd   --mail-from "rjil.notify@gmail.com" --mail-rcpt "raghvendra.maloo@ril.com"   --upload-file /tmp/mail.txt --user "rjil.notify@gmail.com:cloud@123" --insecure
+
+           	   fi
 
 	
 		fi
