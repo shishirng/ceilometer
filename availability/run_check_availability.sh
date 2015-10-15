@@ -9,6 +9,7 @@ passed=0
 testrun_timeout=2m
 testfreq_sleep=1m
 samplecrt_timeout=1m
+a_threshold=99.9
 
 function recover_evt {
 
@@ -71,6 +72,16 @@ do
 	   echo "Availability Drop ALERT!! Availability for last one hour is $avg_returned_value%" >> /tmp/mail.txt
 
 	   curl --url "smtps://smtp.gmail.com:465" --ssl-reqd   --mail-from "rjil.notify@gmail.com" --mail-rcpt "raghvendra.maloo@ril.com"   --upload-file /tmp/mail.txt --user "rjil.notify@gmail.com:cloud@123" --insecure
+           if [ $(bc <<< "$avg_returned_value <= $a_threshold") -eq 1 ]; then
+           	#notify PMs
+		#echo "To:Ravikanth.Maddikonda@ril.com" > /tmp/mail.txt
+                echo "To:raghvendra.maloo@ril.com;swami.reddy@ril.com" > /tmp/mail.txt
+		echo "Subject:Availability Below Threshold!" >> /tmp/mail.txt
+		echo "Availability Drop ALERT!! Availability for last one hour is $avg_returned_value%" >> /tmp/mail.txt
+
+		#curl --url "smtps://smtp.gmail.com:465" --ssl-reqd   --mail-from "rjil.notify@gmail.com" --mail-rcpt "Ravikanth.Maddikonda@ril.com"   --upload-file /tmp/mail.txt --user "rjil.notify@gmail.com:cloud@123" --insecure
+                curl --url "smtps://smtp.gmail.com:465" --ssl-reqd   --mail-from "rjil.notify@gmail.com" --mail-rcpt "raghvendra.maloo@ril.com"   --upload-file /tmp/mail.txt --user "rjil.notify@gmail.com:cloud@123" --insecure
+           fi
 	
 	fi
 
