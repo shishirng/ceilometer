@@ -1,4 +1,5 @@
 - Make sure jq is installed
+- Ensure $OS_USERNAME and $OS_PASSWORD env variables are set properly (i.e. source openrc)
 - copy run_check_availability to /opt/stack/tempest
 - extract passvol.gz and failvol.gz in /opt/stack/tempest/tempest/api
 - check normal tempest testcases are running file
