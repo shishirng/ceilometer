@@ -46,7 +46,11 @@ fi
 compute_evtcnt volume.create.attempted $seconds $minutes $hours $days $weeks $months  cnt_attempted_rval ttc_attempted_rval
 compute_evtcnt volume.create.failed $seconds $minutes $hours $days $weeks $months  cnt_failed_rval ttc_failed_rval
 
-passperc=$(( ( ( $cnt_attempted_rval - $cnt_failed_rval ) * 100 ) / $cnt_attempted_rval ))
+passperc=n/a
+
+if [ $cnt_attempted_rval -ne 0 ]; then
+	passperc=$(( ( ( $cnt_attempted_rval - $cnt_failed_rval ) * 100 ) / $cnt_attempted_rval ))
+fi
 
 echo -e "             ----------------------------------"
 echo -e "             Volume Creation Pass Rate : $passperc%"

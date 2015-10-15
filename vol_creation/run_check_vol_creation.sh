@@ -14,8 +14,12 @@ do
        compute_evtcnt volume.create.attempted 0 $chkfreq 0 0 0 0  cnt_attempted_rval ttc_attempted_rval
        compute_evtcnt volume.create.failed 0 $chkfreq 0 0 0 0  cnt_failed_rval ttc_failed_rval
 
-       passperc=$(( ( ( $cnt_attempted_rval - $cnt_failed_rval ) * 100 ) / $cnt_attempted_rval ))
-       
+       passperc=100
+
+       if [ $cnt_attempted_rval -ne 0 ]; then
+	passperc=$(( ( ( $cnt_attempted_rval - $cnt_failed_rval ) * 100 ) / $cnt_attempted_rval ))
+       fi
+
        if [ $passperc -lt $vc_threshold ]; then
 
 		#echo "To:Ravikanth.Maddikonda@ril.com" > /tmp/mail.txt
