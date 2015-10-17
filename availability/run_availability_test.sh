@@ -16,7 +16,7 @@ function test_create_volume()
         
 	timeout $create_cmd_timeout cinder create --display-name $create_volname 1
 
-        if [ $? -ne 124 ] ; then
+        if [ $? -eq 0 ] ; then
 
 		sleep $create_wait_time
 
@@ -31,20 +31,22 @@ function test_create_volume()
 
 			#curl -H "X-Auth-Token: $authtoken" "$cinderendpoint/volumes" | python -m json.tool > /dev/null
 			volcnt=`curl -H "X-Auth-Token: $authtoken" "http://$ipaddress:8776/v2/$tenant/volumes/detail" | jq '.volumes | length'`
-		        COUNTER=0
-			while [ $COUNTER -lt $volcnt ]; do
-		           volname=`curl -H "X-Auth-Token: $authtoken" "http://$ipaddress:8776/v2/$tenant/volumes/detail" | jq .volumes[$COUNTER].name`
-		           volstatus=`curl -H "X-Auth-Token: $authtoken" "http://$ipaddress:8776/v2/$tenant/volumes/detail" | jq .volumes[$COUNTER].status`
-		           volid=`curl -H "X-Auth-Token: $authtoken" "http://$ipaddress:8776/v2/$tenant/volumes/detail" | jq .volumes[$COUNTER].id | sed "s/\"//g"`
-		           if [ $volname = "\"$create_volname\"" ] ; then
-				if [ $volstatus = "\"available\"" ] ; then
-		                    eval $__test_result=0
-		                    cinder delete $volid
-		                fi
-		           fi
-		           let COUNTER=COUNTER+1 
-			done
-		        
+                        if [ $? -eq 0 ]; then
+
+				COUNTER=0
+				while [ $COUNTER -lt $volcnt ]; do
+				   volname=`curl -H "X-Auth-Token: $authtoken" "http://$ipaddress:8776/v2/$tenant/volumes/detail" | jq .volumes[$COUNTER].name`
+				   volstatus=`curl -H "X-Auth-Token: $authtoken" "http://$ipaddress:8776/v2/$tenant/volumes/detail" | jq .volumes[$COUNTER].status`
+				   volid=`curl -H "X-Auth-Token: $authtoken" "http://$ipaddress:8776/v2/$tenant/volumes/detail" | jq .volumes[$COUNTER].id | sed "s/\"//g"`
+				   if [ $volname = "\"$create_volname\"" ] ; then
+					if [ $volstatus = "\"available\"" ] ; then
+				            eval $__test_result=0
+				            cinder delete $volid
+				        fi
+				   fi
+				   let COUNTER=COUNTER+1 
+				done
+		        fi
 		fi
 
         fi
