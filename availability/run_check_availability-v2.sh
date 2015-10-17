@@ -29,12 +29,12 @@ a_threshold=99.9
 function recover_evt {
 
 	 while [  $passed -gt 0 ]; do
-             timeout $samplecrt_timeout ceilometer sample-create --resource-id 0 --meter-name availability.status.event --meter-type gauge --meter-unit N/A --sample-volume 1
+             timeout $samplecrt_timeout ceilometer sample-create --resource-id 0 --meter-name availability.status.event --meter-type gauge --meter-unit N/A --sample-volume 1 --direct True
              let passed=passed-1 
          done
 
 	while [  $failed -gt 0 ]; do
-             timeout $samplecrt_timeout ceilometer sample-create --resource-id 0 --meter-name availability.status.event --meter-type gauge --meter-unit N/A --sample-volume 0
+             timeout $samplecrt_timeout ceilometer sample-create --resource-id 0 --meter-name availability.status.event --meter-type gauge --meter-unit N/A --sample-volume 0 --direct True
              let failed=failed-1 
          done
 
