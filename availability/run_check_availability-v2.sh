@@ -48,7 +48,7 @@ do
 
         if [ $test_result -eq 0 ]; then
 	
-	    timeout $samplecrt_timeout ceilometer sample-create --resource-id 0 --meter-name availability.status.event --meter-type gauge --meter-unit N/A --sample-volume 1
+	    timeout $samplecrt_timeout ceilometer sample-create --resource-id 0 --meter-name availability.status.event --meter-type gauge --meter-unit N/A --sample-volume 1 --direct True
 
 	    if [ $? -ne 0 ]; then
 	    	
@@ -59,7 +59,7 @@ do
 
 	else
 	
-	    timeout $samplecrt_timeout ceilometer sample-create --resource-id 0 --meter-name availability.status.event --meter-type gauge --meter-unit N/A --sample-volume 0
+	    timeout $samplecrt_timeout ceilometer sample-create --resource-id 0 --meter-name availability.status.event --meter-type gauge --meter-unit N/A --sample-volume 0 --direct True
 
 	    if [ $? -ne 0 ]; then
 	    	
