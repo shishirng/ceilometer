@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # query_availability.sh
 
-source ./queryavg.sh
+source ./common/queryavg.sh
 
 function usage {
   echo "Usage: $0 [OPTION]..."

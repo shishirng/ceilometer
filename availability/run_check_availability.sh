@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # run_check_availability.sh
 
-source ./queryavg.sh
-source ./availabilitytest.sh
+source ./common/queryavg.sh
+source ./common/availabilitytest.sh
 
 function usage {
   echo "Usage: run_check_availability <ipaddress>"
