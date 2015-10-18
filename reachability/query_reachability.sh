@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # query_availability.sh
 
+source ./common/queryavg.sh
+
 function usage {
   echo "Usage: $0 [OPTION]..."
   echo "Query Reachability"
@@ -41,33 +43,9 @@ if  [ \( $seconds -eq 0 -a $minutes -eq 0 -a $hours -eq 0  -a   $days -eq 0  -a 
 	exit 1
 fi
 
-ttc=`date -u --iso-8601=seconds -d "now - $months months - $weeks weeks - $days days - $hours hours - $minutes minutes - $seconds seconds"`
+compute_avg reachability.status.event $seconds $minutes $hours $days $weeks $months   avg_returned_value ttc_returned_value
 
-#echo "ttc=$ttc"
-
-#ceilometer statistics --meter availability.status.event --query 'timestamp>=2015-09-11T04:24:28;timestamp<=2015-10-07T00:49:56+0000' > /tmp/stats
-ceilometer statistics --meter reachability.status.event --query "timestamp>=$ttc" > /tmp/stats
-#ceilometer statistics --meter availability.status.event --query 'timestamp>=2015-07-24T01:01:08+0000' > /tmp/stats 
-a=1
-while read line; 
-do 
-	if [ $((a)) -eq 4 ]; then
-         	
-		b=1
-		for word in $line; do 
-			
-			if [ $((b)) -eq 12 ]; then
-				c=`echo $word \* 100.0 | bc -l`
-				echo -e "             ----------------------------------"
-				echo -e "                Reachability : $c%"
-				echo -e "             From : [`date +'%x %T' -d $ttc`]       "
-				echo -e "             ----------------------------------"
-                        fi
-                        let "b += 1"
-		done
-	fi
-        let "a += 1"
-
-done < /tmp/stats
-
-rm -f /tmp/stats
+echo -e "             ----------------------------------"
+echo -e "                Reachability : $avg_returned_value%"
+echo -e "             From : [$ttc_returned_value]       "
+echo -e "             ----------------------------------"

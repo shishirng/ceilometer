@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # run_check_availability.sh
 
-source ./query_sample_avg.sh
+source ./common/queryavg.sh
 
 function usage {
   echo "Usage: run_check_reachability <ipaddress>"
