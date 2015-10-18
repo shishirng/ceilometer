@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source ./rcv_cep_log.sh
+source ./common/cephlogmgr.sh
 
 function notify_thru_email()
 {

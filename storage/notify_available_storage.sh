@@ -1,7 +1,5 @@
 #!/bin/bash
 
-source ./rcv_cep_log.sh
-
 function notify_thru_email()
 {
 	echo "To:raghvendra.maloo@ril.com;swami.reddy@ril.com" > /tmp/mail.txt
