@@ -20,7 +20,7 @@ cd ceph-bootstrap
 
 sudo ifconfig eth0:0 10.0.2.15
 
-./ceph-install.sh
+./ceph-install.sh giant
 
 #Prepare for Devstack Installation
 
