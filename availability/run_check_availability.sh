@@ -43,8 +43,8 @@ function recover_evt {
 while :
 
 do
-
-	test_create_volume $g_ipaddress test_result
+        test_result=1
+	test_availability $g_ipaddress test_result
 
         if [ $test_result -eq 0 ]; then
 	
