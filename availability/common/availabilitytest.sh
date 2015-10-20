@@ -74,9 +74,9 @@ function get_snapshot_data()
 			   get_cur_volid=`curl -H "X-Auth-Token: $authtoken" "http://$get_snapshot_ipaddress:8776/v2/$tenant/snapshots/detail" | jq .snapshots[$COUNTER].volume_id | sed "s/\"//g"` > /dev/null
 			   get_cur_snapstatus=`curl -H "X-Auth-Token: $authtoken" "http://$get_snapshot_ipaddress:8776/v2/$tenant/snapshots/detail" | jq .snapshots[$COUNTER].status | sed "s/\"//g"` > /dev/null
 			   get_cur_snapid=`curl -H "X-Auth-Token: $authtoken" "http://$get_snapshot_ipaddress:8776/v2/$tenant/snapshots/detail" | jq .snapshots[$COUNTER].id | sed "s/\"//g"` > /dev/null
-                           echo "snapshot volid $get_cur_volid status $get_cur_snapstatus id $get_cur_snapid"
+                           #echo "snapshot volid $get_cur_volid status $get_cur_snapstatus id $get_cur_snapid"
 			   if [ $get_cur_volid = $get_vol_id ] ; then
-                                echo "setting up snapshot status and id"
+                                #echo "setting up snapshot status and id"
 				get_snapshot_status=$get_cur_snapstatus
                                 get_snapshot_id=$get_cur_snapid
                                 break
@@ -152,7 +152,7 @@ function test_availability()
            #echo "volume available"
            test_create_snapshot $test_availability_volid
            get_snapshot_data $test_availability_ipaddress $test_availability_volid test_availability_snapstatus test_availability_snapid
-           echo "snapshot status $test_availability_snapstatus"
+           #echo "snapshot status $test_availability_snapstatus"
            if [ $test_availability_snapstatus != "available" ]
            then
                  test_availability_result=1
