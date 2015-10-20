@@ -33,9 +33,9 @@ query_availability.sh
 
 CONFIGURATION
 
-set testfreq_sleep var in runc_check_availability.sh script to configure the frequency of running the availability testcases.
-set a_threshold var in run_check_availability.sh script to configure the SLA availability percentage threshold requirement
-change --mail-rcpt to the required PM/Eng aliases for SLA violation and testcase failure notifications
+- Set testfreq_sleep var in runc_check_availability.sh script to configure the frequency of running the availability testcases.
+- Set a_threshold var in run_check_availability.sh script to configure the SLA availability percentage threshold requirement
+- Change --mail-rcpt to the required PM/Eng aliases for SLA violation and testcase failure notifications
 
 INSTRUCTIONS TO RUN
 
