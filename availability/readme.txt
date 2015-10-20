@@ -17,6 +17,8 @@ run_check_availability.sh
  	- Logs the testcase run results with the timestamp into the ceilometer
 	- On testcase failures computes the availabilty for last one hour and if this is less the specified SLA (a_threshold) it notifies the PM/Eng aliases thru email
 
+        echo "Usage: run_check_availability <endpoint IP address>"
+
 query_availability.sh
 
 	- The script allows users to query the availability percentage for the specified window of time in terms of seconds, minutes, days, weeks, months
@@ -41,7 +43,7 @@ INSTRUCTIONS TO RUN
 
 - Open a terminal
 - Set $OS_USERNAME and $OS_PASSWORD env variables (source openrc admin admin)
-- run script run_check_availability (./run_check_availability.sh)
+- run script run_check_availability (e.g. './run_check_availability.sh 10.0.2.15')
 
 To manually query the current Availaiblity pecentage 
 
