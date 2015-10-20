@@ -1,53 +1,35 @@
-#Ceilometer setup
+This project implements the monitoring system for Openstack - Block Storage with the following Features:
 
-#Install common components
+Availability SLA with 99.9%
 
-sudo apt-get install git -y
+	Develop tool/script to continuously check the SBS service request's responses in the past 5 min. and calculate the availability SLA. Raise an alert if the metrics < 99.9%.
 
-sudo apt-get install python-dev libssl-dev python-pip git-core libxml2-dev libxslt-dev pkg-config libffi-dev libpq-dev libmysqlclient-dev libvirt-dev graphviz libsqlite3-dev -y
+        Implementation : ./availability/readme.txt
 
-sudo apt-get install jq
+Reachability of SBS endpoint
 
-#CEPH Installation
+	Develop tool/script to continuously check the SBS service endpoint reachability using 5 min. window. Raise an alert if the metrics < 99.9%.
+        
+        Implementation : ./reachability/readme.txt
 
-git clone https://github.com/theanalyst/ceph-bootstrap
+Storage Cluster Health monitoring
 
-cd ceph-bootstrap
+	Develop tool/script to get the used and available storage details and share with team periodically.
 
-#Add virtual IP address 
+	Measure Average latency of the Storage Cluster.
 
--Add entry 10.0.2.15 <hostname> to /etc/hosts
+        Implementation : ./storage/readme.txt
 
-sudo ifconfig eth0:0 10.0.2.15
+Customers statistics and checks for not able to create volumes/snapshots within quota limits.
 
-./ceph-install.sh giant
+	Collect statistics of volume creation and snapshot creation customer APIs. Auto notify in case the pass rate is below given threshold.
 
-#Prepare for Devstack Installation
+        Implementation : ./apistats/readme.txt
 
-git clone https://github.com/openstack-dev/devstack.git
+INSTRUCTIONS TO SETUP
 
-cd ~/devstack
-
--copy https://github.com/ceph/ceph-devstack/localrc to ~/devstack/localrc
-
--set REMOTE_CEPH=True in the copied localrc
-
--replace CEPH_FSID to the current ceph fsid (use command sudo ceph status)
-
-#Enable Ceilometer Services
-
--Follow instructions as suggested in http://docs.openstack.org/developer/ceilometer/install/development.html
-
-#Install Devstack
-
-./stack.sh
-
-#Restart Ceilometer Auditing
-
--restart nova and cinder after changes mentioned in http://docs.openstack.org/developer/ceilometer/install/development.html
-
--Note: all the above localrc changes are readily available in the checked in localrc to this git site
-
-
+	Install Openstack with Ceph and ceilometer services enabled - follow instructions in ./docs/readme.txt
+        
+        Follow instructions of feature specific readme.txt
 
 
