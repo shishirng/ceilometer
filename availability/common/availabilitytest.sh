@@ -21,8 +21,11 @@ function get_volume_data()
 
 
 	if [ $? -eq 0 ]; then
-		get_vol_cnt=`curl -H "X-Auth-Token: $authtoken" "http://$get_vol_ipaddress:8776/v2/$tenant/volumes/detail" | jq '.volumes | length'` > /dev/null
+                curl -H "X-Auth-Token: $authtoken" "http://$get_vol_ipaddress:8776/v2/$tenant/volumes/detail" > /dev/null
+		
                 if [ $? -eq 0 ]; then
+
+                        get_vol_cnt=`curl -H "X-Auth-Token: $authtoken" "http://$get_vol_ipaddress:8776/v2/$tenant/volumes/detail" | jq '.volumes | length'` > /dev/null
 
 			COUNTER=0
 			while [ $COUNTER -lt $get_vol_cnt ]; do
@@ -66,9 +69,10 @@ function get_snapshot_data()
 
 
 	if [ $? -eq 0 ]; then
-		get_snapshot_cnt=`curl -H "X-Auth-Token: $authtoken" "http://$get_snapshot_ipaddress:8776/v2/$tenant/snapshots/detail" | jq '.snapshots | length'` > /dev/null
+		curl -H "X-Auth-Token: $authtoken" "http://$get_snapshot_ipaddress:8776/v2/$tenant/snapshots/detail" > /dev/null
                 if [ $? -eq 0 ]; then
 
+                        get_snapshot_cnt=`curl -H "X-Auth-Token: $authtoken" "http://$get_snapshot_ipaddress:8776/v2/$tenant/snapshots/detail" | jq '.snapshots | length'` > /dev/null
 			COUNTER=0
 			while [ $COUNTER -lt $get_snapshot_cnt ]; do
 			   get_cur_volid=`curl -H "X-Auth-Token: $authtoken" "http://$get_snapshot_ipaddress:8776/v2/$tenant/snapshots/detail" | jq .snapshots[$COUNTER].volume_id | sed "s/\"//g"` > /dev/null
@@ -145,7 +149,7 @@ function test_availability()
         get_volume_data $test_availability_ipaddress $test_availability_volname test_availability_volstatus test_availability_volid
 
         #echo "volume status $test_availability_volstatus"
-	if [ $test_availability_volstatus != "available" ]
+	if [ "$test_availability_volstatus" != "available" ]
         then
            test_availability_result=1
         else 
@@ -153,7 +157,7 @@ function test_availability()
            test_create_snapshot $test_availability_volid
            get_snapshot_data $test_availability_ipaddress $test_availability_volid test_availability_snapstatus test_availability_snapid
            #echo "snapshot status $test_availability_snapstatus"
-           if [ $test_availability_snapstatus != "available" ]
+           if [ "$test_availability_snapstatus" != "available" ]
            then
                  test_availability_result=1
            else
