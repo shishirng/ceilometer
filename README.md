@@ -24,10 +24,11 @@ Implementation : ./reachability/readme.txt
 
 Implementation : ./storage/readme.txt
 
-#Customers statistics and checks for not able to create volumes/snapshots within quota limits.
+#Customers API statistics 
 
-- Collect statistics of volume creation and snapshot creation customer APIs. Auto notify in case the 
-  pass rate is below given threshold.
+- Checks for not able to create volumes/snapshots within quota limits.
+- Collect statistics of volume creation and snapshot creation customer APIs
+- Auto notify in case the pass rate is below given threshold.
 
 Implementation : ./apistats/readme.txt
 
